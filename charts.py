@@ -3,14 +3,15 @@ import numpy as np
 import __main__
 
 
-#Pie Chart
+# Pie Chart
 def pie_chart():
     plt.rcParams.update({'figure.autolayout': True})
     y = np.array(__main__.numbers)
     plt.pie(y, labels=__main__.my_labels, autopct=lambda p: '{:.0f}%'.format(p * int(__main__.add) / 100))
     plt.show()
 
-#Bar chart
+
+# Bar chart
 def bar_chart():
     plt.rcParams.update({'figure.autolayout': True})
     fig, ax = plt.subplots(figsize=(10, 5))

@@ -1,40 +1,35 @@
 import datetime
 import load_data
-import __main__
 
-def sum():
-    ### Wyliczenie alltime
-    activity = __main__.activity
-    allTime = datetime.timedelta()
+
+def sum_time():
+    # time calculation
+    activity = load_data.load()
+    all_time = datetime.timedelta()
     for i in activity.values():
         (h, m, sec) = i.split(':')
         d = datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(sec))
-        allTime += d
-    # print(type(allTime))
-    # print(allTime.seconds,'moje sekundy')
-    # print(allTime.days,'moje dni')
-    allTime_in_sec = allTime.seconds + allTime.days*24*3600
+        all_time += d
+    all_time_in_sec = all_time.seconds + all_time.days*24*3600
 
-    ### procentowe wyliczenie czasu
+    # percentage time calculation
     percentage = {}
-    # print(activity.keys())
     for a in activity.keys():
         (h, m, sec) = activity[a].split(':')
         d = datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(sec))
-        per = 100*d.seconds/allTime_in_sec
+        per = 100*d.seconds/all_time_in_sec
         percentage[a] = per
-    ### sprawdzanie sumy
-    add = 0
+    # check the sum
+    total_time = 0
     for p in percentage.values():
-        add += p
+        total_time += p
 
-    ###Sortowanie
-    # print(sorted(percentage.items(), key=lambda x: x[1]))
-    posortowane = {}
-    posortowane.update(sorted(percentage.items(), key=lambda x: x[1]))
+    # sort data time
+    sort_time = {}
+    sort_time.update(sorted(percentage.items(), key=lambda x: x[1]))
 
-    ###Ładowanie danych do wykresu
-    mylabels = list(posortowane.keys())
-    numbers = list(posortowane.values())
+    # Load data into the chart
+    my_labels = list(sort_time.keys())
+    numbers = list(sort_time.values())
 
-    return mylabels, numbers, add
+    return my_labels, numbers, total_time
