@@ -1,9 +1,8 @@
 import gui
-# import customtkinter as ctk
-import sum_time
+import load_data
 
 
 if __name__ == '__main__':
-    my_labels, numbers, add = sum_time.sum_time()
+    activity_summary = load_data.load()
     app = gui.App()
     app.mainloop()
