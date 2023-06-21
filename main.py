@@ -1,5 +1,6 @@
 import gui
 import load_data
+import pandas as pd
 
 
 if __name__ == '__main__':

@@ -38,7 +38,8 @@ def load():
     for date, activities in activity_summary.items():
         for activity, time_delta in activities.items():
             activity_summary[date][activity] = str(time_delta)
-    print(activity_summary)
+    a = sorted(activity_summary.items(), key=lambda x: x[0])
+    activity_summary = dict(a)
 
     # Data transfer/saving to a new csv or txt file
     pass
