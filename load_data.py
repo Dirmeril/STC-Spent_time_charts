@@ -35,9 +35,9 @@ def load():
                 print('Error! Line: {}: {}'.format(counter, line))
 
     # Changing time format in activity_summary
-    for date, activities in activity_summary.items():
-        for activity, time_delta in activities.items():
-            activity_summary[date][activity] = str(time_delta)
+    # for date, activities in activity_summary.items():
+    #     for activity, time_delta in activities.items():
+    #         activity_summary[date][activity] = str(time_delta)
     a = sorted(activity_summary.items(), key=lambda x: x[0])
     activity_summary = dict(a)
 

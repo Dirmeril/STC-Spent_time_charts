@@ -14,21 +14,31 @@ class App(ctk.CTk):
         self.frame_d = ctk.CTkFrame(self)
         self.frame_d.pack(side='top', pady=2, fill='x')
 
-        # Create chart buttons
-        self.circle = ctk.CTkButton(self.frame, text="Pie chart", command=self.checkbox_activities, corner_radius=10)
+        # Create chart buttons: pie and bar
+        self.circle = ctk.CTkButton(self.frame, text="Pie chart", corner_radius=10,
+                                    command=lambda: [self.checkbox_activities(), charts.pie_chart(self.to_chart, self.first_date, self.last_date)])
         self.circle.grid(row=0, column=0, pady=20, padx=20)
 
-        self.bar = ctk.CTkButton(self.frame, text="Bar chart", command=charts.bar_chart and self.checkbox_event, corner_radius=10)
+        self.bar = ctk.CTkButton(self.frame, text="Bar chart", corner_radius=10, command=None)
         self.bar.grid(row=0, column=1, pady=20, padx=20)
 
-        # Create option bars
-        self.from_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()], command=None)
+        # Create option bars with dates
+        self.first_date = list(__main__.activity_summary.keys())[0]
+        self.last_date = list(__main__.activity_summary.keys())[-1]
+        self.from_option_var = ctk.StringVar(value=self.first_date)  # set initial value
+        self.from_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()],
+                                             command=self.chosen_first_date, variable=self.from_option_var)
         self.from_option.grid(row=0, column=2, pady=20, padx=20)
+        self.from_option.set(self.first_date)
 
-        self.to_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()], command=None)
+        self.to_option_var = ctk.StringVar(value=self.last_date)  # set initial value
+        self.to_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()],
+                                           command=self.chosen_last_date, variable=self.to_option_var)
         self.to_option.grid(row=0, column=3, pady=20, padx=20)
+        self.to_option.set(self.last_date)
 
         # Create checkboxes for activities
+        self.to_chart = []      # To function: checkbox_activities
         self.list_of_activities = []
         self.counter: int = -1
         for date in __main__.activity_summary.keys():
@@ -40,22 +50,27 @@ class App(ctk.CTk):
             self.counter += 1
             # Split activities on two columns
             if self.counter % 2 == 0:
-                self.checkbox = ctk.CTkCheckBox(self.frame_d, text=self.sorted_activity, variable=self.activities_var[self.sorted_activity], onvalue=1, offvalue=0)
+                self.checkbox = ctk.CTkCheckBox(self.frame_d, text=self.sorted_activity,
+                                                variable=self.activities_var[self.sorted_activity], onvalue=1,
+                                                offvalue=0)
                 self.checkbox.grid(row=self.counter, column=0, pady=5, padx=20, ipadx=15, sticky='ew')
             else:
-                self.checkbox = ctk.CTkCheckBox(self.frame_d, text=self.sorted_activity, variable=self.activities_var[self.sorted_activity], onvalue=1, offvalue=0)
-                self.checkbox.grid(row=self.counter-1, column=1, pady=5, padx=5, ipadx=15, sticky='ew')
+                self.checkbox = ctk.CTkCheckBox(self.frame_d, text=self.sorted_activity,
+                                                variable=self.activities_var[self.sorted_activity], onvalue=1,
+                                                offvalue=0)
+                self.checkbox.grid(row=self.counter - 1, column=1, pady=5, padx=5, ipadx=15, sticky='ew')
 
-    def checkbox_event(self):
-        for box in self.checkboxes:
-            text = box.get()
-            print("checkbox toggled, current value:", box, text)
-        for activity in __main__.activity_summary.keys():
-            print(activity)
-
+    # Function to choose activities
     def checkbox_activities(self):
-        to_chart = []
+        self.to_chart = []
         for key, value in self.activities_var.items():
             if value.get() == 1:
-                to_chart.append(key)
-        print(to_chart)
+                self.to_chart.append(key)
+
+    # Function to choose range dates
+    def chosen_first_date(self, choice):
+        self.first_date = choice
+
+    def chosen_last_date(self, choice):
+        self.last_date = choice
+
