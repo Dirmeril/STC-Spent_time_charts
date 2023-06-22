@@ -19,7 +19,8 @@ class App(ctk.CTk):
                                     command=lambda: [self.checkbox_activities(), charts.pie_chart(self.to_chart, self.first_date, self.last_date)])
         self.circle.grid(row=0, column=0, pady=20, padx=20)
 
-        self.bar = ctk.CTkButton(self.frame, text="Bar chart", corner_radius=10, command=None)
+        self.bar = ctk.CTkButton(self.frame, text="Bar chart", corner_radius=10,
+                                 command=lambda: [self.checkbox_activities(), charts.bar_chart(self.to_chart, self.first_date, self.last_date)])
         self.bar.grid(row=0, column=1, pady=20, padx=20)
 
         # Create option bars with dates
