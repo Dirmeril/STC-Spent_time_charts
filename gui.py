@@ -10,9 +10,12 @@ class App(ctk.CTk):
         self.resizable(False, False)
         self.title('STC')
         self.frame = ctk.CTkFrame(self)
-        self.frame.pack(side='top', pady=2, fill='x')
+        self.frame.pack(side='top', pady=2,)
+        # self.frame_r = ctk.CTkFrame(self)
+        # self.frame_r.pack(side='top', pady=2,)
         self.frame_d = ctk.CTkFrame(self)
-        self.frame_d.pack(side='top', pady=2, fill='x')
+        self.frame_d.pack(side='bottom', pady=2, fill='x')
+
 
         # Create chart buttons: pie and bar
         self.circle = ctk.CTkButton(self.frame, text="Pie chart", corner_radius=10,
@@ -20,7 +23,7 @@ class App(ctk.CTk):
         self.circle.grid(row=0, column=0, pady=20, padx=20)
 
         self.bar = ctk.CTkButton(self.frame, text="Bar chart", corner_radius=10,
-                                 command=lambda: [self.checkbox_activities(), charts.bar_chart(self.to_chart, self.first_date, self.last_date)])
+                                 command=lambda: [self.checkbox_activities(), charts.stacked_bar_chart(self.to_chart, self.first_date, self.last_date)])
         self.bar.grid(row=0, column=1, pady=20, padx=20)
 
         # Create option bars with dates
@@ -29,14 +32,21 @@ class App(ctk.CTk):
         self.from_option_var = ctk.StringVar(value=self.first_date)  # set initial value
         self.from_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()],
                                              command=self.chosen_first_date, variable=self.from_option_var)
-        self.from_option.grid(row=0, column=2, pady=20, padx=20)
+        self.from_option.grid(row=0, column=2, pady=30, padx=30, sticky='s')
         self.from_option.set(self.first_date)
 
         self.to_option_var = ctk.StringVar(value=self.last_date)  # set initial value
         self.to_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()],
                                            command=self.chosen_last_date, variable=self.to_option_var)
-        self.to_option.grid(row=0, column=3, pady=20, padx=20)
+        self.to_option.grid(row=0, column=3, pady=30, padx=30, sticky='s')
         self.to_option.set(self.last_date)
+
+        # Create labels for option_menu_dates
+        self.label_from_option = ctk.CTkLabel(self.frame, text="From date:")
+        self.label_from_option.grid(row=0, column=2, sticky='nw', padx=30)
+
+        self.label_to_option = ctk.CTkLabel(self.frame, text="To date:")
+        self.label_to_option.grid(row=0, column=3, sticky='nw', padx=30)
 
         # Create checkboxes for activities
         self.to_chart = []      # To function: checkbox_activities

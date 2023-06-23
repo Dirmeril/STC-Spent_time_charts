@@ -9,6 +9,7 @@ def chosen_dates_and_activities(activities, first_date, last_date):
     dates = list(__main__.activity_summary.keys())
     first = dates.index(first_date)
     last = dates.index(last_date)+1
+    # Swap dates and activities to DataFrame
     chosen_activities = __main__.df_activity_summary.loc[[a for a in activities], [d for d in dates[first:last]]]
     # Discard of small values
     data_sum_in_rows = chosen_activities.sum(axis=1)
@@ -22,35 +23,54 @@ def chosen_dates_and_activities(activities, first_date, last_date):
 
     return chosen_activities_without_small_percent, activities_without_small_percent
 
-#Pie chart
+
+# Pie chart
 def pie_chart(activities, first_date, last_date):
     data_time, data_activities = chosen_dates_and_activities(activities, first_date, last_date)
-    plt.rcParams.update({'figure.autolayout': True})
     data_to_chart = np.array(data_time)
     plt.pie(data_to_chart, labels=data_activities, autopct=lambda p: f'{p:.0f}%')
+    plt.rcParams.update({'figure.autolayout': True})
     plt.show()
 
 
-# Bar chart
-def bar_chart(activities, first_date, last_date):
-    data_time, data_activities = chosen_dates_and_activities(activities, first_date, last_date)
-    data_to_chart = np.array(data_time)
-    plt.rcParams.update({'figure.autolayout': True})
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.barh(data_activities, data_to_chart)
-    ax.invert_yaxis()
-    # Add annotation to bars
-    for i in ax.patches:
-        plt.text(i.get_width() + 0.2, i.get_y() + 0.5,
-                 str(round((i.get_width()), 2)),
-                 fontsize=9, fontweight='bold',
-                 color='black')
-    # Remove x, y Ticks
-    ax.xaxis.set_ticks_position('none')
-    ax.yaxis.set_ticks_position('none')
-    # Remove axes splines
-    for s in ['top', 'left', 'right']:
-        ax.spines[s].set_visible(False)
-    # Add x, y gridlines
-    ax.grid(color='grey', linewidth=0.5, alpha=0.7, linestyle='-.')
+# def stacked_bar_chart_sum_by_dates(activities, first_date, last_date):
+#     data_time, data_activities = chosen_dates_and_activities(activities, first_date, last_date)
+#     df_data_time = pd.DataFrame(data_time, dtype='timedelta64[s]')
+#     # print(type(df_data_time))
+#     # print(df_data_time)
+#     for activi in df_data_time.columns:
+#         data = df_data_time.loc[:, activi]
+#         data_seconds = data.dt.total_seconds()
+#     print(data_seconds)
+#
+#     # plot data in stack manner of bar type
+#     data_seconds.plot(kind='bar', stacked=True,
+#             title='Stacked Bar Graph by dataframe')
+#     plt.xticks(rotation=30)
+#     plt.show()
+
+
+def bar_chosen_dates_and_activities(activities, first_date, last_date):
+    dates = list(__main__.activity_summary.keys())
+    first = dates.index(first_date)
+    last = dates.index(last_date)+1
+    # Swap dates and activities to DataFrame
+    chosen_activities = __main__.df_activity_summary.loc[[a for a in activities], [d for d in dates[first:last]]]
+    list_of_activities = [a for a in activities]
+
+    return chosen_activities, list_of_activities
+
+
+def stacked_bar_chart(activities, first_date, last_date):
+    df_data_time, data_activities = bar_chosen_dates_and_activities(activities, first_date, last_date)
+    df_data_time = df_data_time.T       # transposition
+    # Calculation from datetime.delta time to seconds in int
+    for a in data_activities:
+        print(a)
+        df_data_time[a] = df_data_time[a].dt.total_seconds()
+    print(df_data_time)
+
+    # plot data in stack manner of bar type
+    df_data_time.plot(kind='bar', stacked=True, title='Stacked Bar Graph')
+    plt.xticks(rotation=30)
     plt.show()
