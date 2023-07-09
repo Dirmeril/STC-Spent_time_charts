@@ -1,3 +1,4 @@
+from tkcalendar import Calendar, DateEntry
 import customtkinter as ctk
 import charts
 import __main__
@@ -11,43 +12,60 @@ class App(ctk.CTk):
         self.resizable(False, False)
         self.title('STC')
         self.frame = ctk.CTkFrame(self)
-        self.frame.pack(side='top', pady=2,)
-
+        self.frame.pack(pady=2)
         self.frame_d = ctk.CTkFrame(self)
-        self.frame_d.pack(side='bottom', pady=2, fill='x')
+        self.frame_d.pack(side='left', fill='x', expand=True)
+        self.frame_another = ctk.CTkFrame(self)
+        self.frame_another.pack(side='left', fill='both', expand=True)
 
-        # Create chart buttons: pie and bar
-        self.circle = ctk.CTkButton(self.frame, text="Pie chart", corner_radius=10,
-                                    command=lambda: [self.checkbox_activities(),
-                                                     charts.pie_chart(self.to_chart, self.first_date, self.last_date)])
-        self.circle.grid(row=0, column=0, pady=20, padx=20)
+        # Create frame for chart buttons pie and bar and that buttons
+        self.frame_buttons = ctk.CTkFrame(self.frame)
+        self.frame_buttons.grid(row=0, column=0, pady=5, padx=20, sticky='nsew')
+        self.circle = ctk.CTkButton(self.frame_buttons, text="Pie chart", corner_radius=10,
+                                    command=lambda: [self.checkbox_activities(), self.chosen_date(),
+                                                     charts.pie_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button)])
+        self.circle.pack(pady=20, padx=20, side='top')
 
-        self.bar = ctk.CTkButton(self.frame, text="Bar chart", corner_radius=10,
-                                 command=lambda: [self.checkbox_activities(),
-                                                  charts.stacked_bar_chart(self.to_chart, self.first_date, self.last_date)])
-        self.bar.grid(row=0, column=1, pady=20, padx=20)
+        self.bar = ctk.CTkButton(self.frame_buttons, text="Bar chart", corner_radius=10,
+                                 command=lambda: [self.checkbox_activities(), self.chosen_date(),
+                                                  charts.stacked_bar_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button)])
+        self.bar.pack(pady=20, padx=20, side='top')
 
-        # Create labels for option_menu_dates
+        # Create labels for option_menu_dates/calendars
         self.label_from_option = ctk.CTkLabel(self.frame, text="From date:")
         self.label_from_option.grid(row=0, column=2, sticky='nw', padx=30, )
 
         self.label_to_option = ctk.CTkLabel(self.frame, text="To date:")
         self.label_to_option.grid(row=0, column=3, sticky='nw', padx=30)
 
-        # Create option bars with dates
+        # Create calendar_start
         self.first_date = list(__main__.activity_summary.keys())[0]
-        self.last_date = list(__main__.activity_summary.keys())[-1]
-        self.from_option_var = ctk.StringVar(value=self.first_date)  # set initial value
-        self.from_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()],
-                                             command=self.chosen_first_date, variable=self.from_option_var)
-        self.from_option.grid(row=0, column=2, pady=22, padx=30, sticky='s')
-        self.from_option.set(self.first_date)
+        self.cal_start = Calendar(self.frame, background='darkblue', selectmode='day',
+                                  foreground='white', borderwidth=2, year=int(self.first_date.split('-')[0]),
+                                  month=int(self.first_date.split('-')[1]), day=int(self.first_date.split('-')[2]))
+        self.cal_start.grid(row=0, column=2, pady=22, padx=30, sticky='s')
 
-        self.to_option_var = ctk.StringVar(value=self.last_date)  # set initial value
-        self.to_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()],
-                                           command=self.chosen_last_date, variable=self.to_option_var)
-        self.to_option.grid(row=0, column=3, pady=22, padx=30, sticky='s')
-        self.to_option.set(self.last_date)
+        # Create calender_end
+        self.last_date = list(__main__.activity_summary.keys())[-1]
+        self.cal_end = Calendar(self.frame, background='darkblue', selectmode='day',
+                                foreground='white', borderwidth=2, year=int(self.last_date.split('-')[0]),
+                                month=int(self.last_date.split('-')[1]), day=int(self.last_date.split('-')[2]))
+        self.cal_end.grid(row=0, column=3, pady=22, padx=30, sticky='s')
+
+        # Create option bars with dates
+        # self.first_date = list(__main__.activity_summary.keys())[0]
+        # self.last_date = list(__main__.activity_summary.keys())[-1]
+        # self.from_option_var = ctk.StringVar(value=self.first_date)  # set initial value
+        # self.from_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()],
+        #                                      command=self.chosen_first_date, variable=self.from_option_var)
+        # self.from_option.grid(row=0, column=2, pady=22, padx=30, sticky='s')
+        # self.from_option.set(self.first_date)
+        #
+        # self.to_option_var = ctk.StringVar(value=self.last_date)  # set initial value
+        # self.to_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()],
+        #                                    command=self.chosen_last_date, variable=self.to_option_var)
+        # self.to_option.grid(row=0, column=3, pady=22, padx=30, sticky='s')
+        # self.to_option.set(self.last_date)
 
         # Create checkboxes for activities
         self.to_chart = []      # To function: checkbox_activities
@@ -85,3 +103,10 @@ class App(ctk.CTk):
 
     def chosen_last_date(self, choice):
         self.last_date = choice
+
+    def chosen_date(self):
+        self.first_date_to_button = str(self.cal_start.selection_get())
+        self.last_date_to_button = str(self.cal_end.selection_get())
+
+        # date = cal.entry.get()
+        # date_label.config(text=date)

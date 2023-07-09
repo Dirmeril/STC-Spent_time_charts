@@ -1,5 +1,6 @@
 import os
 import datetime
+import pandas as pd
 
 
 def load():
@@ -35,13 +36,14 @@ def load():
                 print('Error! Line: {}: {}'.format(counter, line))
 
     # Changing time format in activity_summary
-    # for date, activities in activity_summary.items():
-    #     for activity, time_delta in activities.items():
-    #         activity_summary[date][activity] = str(time_delta)
-    a = sorted(activity_summary.items(), key=lambda x: x[0])
-    activity_summary = dict(a)
+    for date, activities in activity_summary.items():
+        for activity, time_delta in activities.items():
+            activity_summary[date][activity] = str(time_delta)
+    sorting = sorted(activity_summary.items(), key=lambda x: x[0])
+    activity_summary = dict(sorting)
 
-    # Data transfer/saving to a new csv or txt file
-    pass
-
+    print(activity_summary.keys())
+    for a in activity_summary.keys():
+        print(a)
+        print(type(a))
     return activity_summary
