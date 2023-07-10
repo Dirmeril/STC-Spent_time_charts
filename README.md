@@ -7,7 +7,7 @@ pip install matplotlib`
 ### About the program
 A program collect data from file work_log.txt and display pie chart or stacked bar chart. The program allows choose activities and time range which will be display. 
 The text file must be in the same folder as the program.  
-Program load data from file work_log.txt which has pattern:  
+Load data from file work_log.txt which has pattern:  
 'Activity; time spent on activity; date when activity started
 
 For example:  
