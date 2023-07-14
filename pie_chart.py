@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import __main__
-import gui
 
 
 # Sum data for pie chart
@@ -26,11 +25,9 @@ def chosen_dates_and_activities(activities, first_date, last_date):
         msg = ''
         return chosen_activities_without_small_percent, activities_without_small_percent, msg
 
-    except ValueError as e:
+    except ValueError:
         msg = 'Choose available date'
         return None, None, msg
-
-
 
 
 # Pie chart
@@ -50,6 +47,6 @@ def pie_chart(activities, first_date, last_date):
         else:
             return msg
 
-    except AttributeError as e:
+    except AttributeError:
         msg = "The \"To date\" is\n earlier date than \"From date\""
         return msg

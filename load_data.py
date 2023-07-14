@@ -1,6 +1,5 @@
 import os
 import datetime
-import pandas as pd
 
 
 def load():
@@ -8,6 +7,7 @@ def load():
     get_dir = os.getcwd()
     file = os.path.join(get_dir, name)
     activity_summary = {}
+    error_list = []
     counter: int = 0        # To the mark lines
     with open(file, 'r') as f:
         for line in f:
@@ -33,7 +33,8 @@ def load():
                 else:
                     activity_summary[date_str][activity_name] = time_delta
             else:
-                print('Error! Line: {}: {}'.format(counter, line))
+                error_list.append('Line: {}: {}'.format(counter, line))
+                # print('Error! Line: {}: {}'.format(counter, line))
 
     # Changing time format in activity_summary
     for date, activities in activity_summary.items():
@@ -42,4 +43,7 @@ def load():
     sorting = sorted(activity_summary.items(), key=lambda x: x[0])
     activity_summary = dict(sorting)
 
-    return activity_summary
+    # Create convert error_list to text
+    pass
+
+    return activity_summary, list(error_list)

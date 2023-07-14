@@ -1,9 +1,8 @@
-from tkcalendar import Calendar, DateEntry
+from tkcalendar import Calendar
 import customtkinter as ctk
 import bar_chart
 import pie_chart
 import __main__
-
 from datetime import datetime
 
 
@@ -14,12 +13,20 @@ class App(ctk.CTk):
         self.geometry()
         self.resizable(False, False)
         self.title('STC')
+        # Create frame on top
         self.frame = ctk.CTkFrame(self)
         self.frame.pack(pady=2)
-        self.frame_d = ctk.CTkFrame(self)
-        self.frame_d.pack(side='left', fill='x', expand=True)
-        self.frame_another = ctk.CTkFrame(self)
-        self.frame_another.pack(side='left', fill='both', expand=True)
+        # Create frame on left-down
+        self.frame_3 = ctk.CTkFrame(self)
+        self.frame_3.pack(side='left', fill='x', expand=True)
+        # Create frame on right-down
+        self.frame_4 = ctk.CTkFrame(self)
+        self.frame_4.pack(side='left', fill='both', expand=True)
+
+        self.sorted_activity = None
+        self.first_date_to_button = None
+        self.last_date_to_button = None
+        self.text = None
 
         # Create frame for chart buttons pie and bar and that buttons
         self.frame_buttons = ctk.CTkFrame(self.frame)
@@ -32,7 +39,7 @@ class App(ctk.CTk):
                                  command=lambda: [self.checkbox_activities(), self.chosen_date(), self.bar_chart()])
         self.bar.pack(pady=20, padx=20, side='top')
 
-        self.label_message = ctk.CTkLabel(self.frame_buttons, text='datyyy')
+        self.label_message = ctk.CTkLabel(self.frame_buttons, text='The largest range\nselected by default')
         self.label_message.pack(side='top')
 
         # Create labels for option_menu_dates/calendars
@@ -76,15 +83,23 @@ class App(ctk.CTk):
             self.counter += 1
             # Split activities on two columns
             if self.counter % 2 == 0:
-                self.checkbox = ctk.CTkCheckBox(self.frame_d, text=self.sorted_activity,
+                self.checkbox = ctk.CTkCheckBox(self.frame_3, text=self.sorted_activity,
                                                 variable=self.activities_var[self.sorted_activity], onvalue=1,
                                                 offvalue=0)
                 self.checkbox.grid(row=self.counter, column=0, pady=5, padx=20, ipadx=15, sticky='ew')
             else:
-                self.checkbox = ctk.CTkCheckBox(self.frame_d, text=self.sorted_activity,
+                self.checkbox = ctk.CTkCheckBox(self.frame_3, text=self.sorted_activity,
                                                 variable=self.activities_var[self.sorted_activity], onvalue=1,
                                                 offvalue=0)
                 self.checkbox.grid(row=self.counter - 1, column=1, pady=5, padx=5, ipadx=15, sticky='ew')
+
+        # Create text-pool for error in load data
+        self.textbox = ctk.CTkTextbox(self.frame_4, corner_radius=0)
+        self.textbox.pack(fill='both', expand=True)
+        self.textbox.insert('insert', "Lines which haven't been load in data:\n")
+        for _ in __main__.error_list:
+            self.textbox.insert("insert", str(_))
+        # self.textbox.insert("insert", [str(_) for _ in __main__.error_list])
 
     # Function to choose activities
     def checkbox_activities(self):
@@ -105,4 +120,3 @@ class App(ctk.CTk):
     def bar_chart(self):
         self.text = bar_chart.stacked_bar_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button)
         self.label_message.configure(text=self.text)
-

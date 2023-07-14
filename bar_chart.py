@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import pandas as pd
 import __main__
 
 
@@ -16,7 +15,7 @@ def bar_chosen_dates_and_activities(activities, first_date, last_date):
         msg = ''
         return chosen_activities, list_of_activities, msg
 
-    except ValueError as e:
+    except ValueError:
         msg = 'Choose available date'
         return None, None, msg
 
@@ -41,7 +40,6 @@ def stacked_bar_chart(activities, first_date, last_date):
             return msg
         else:
             return msg
-    except AttributeError as e:
+    except AttributeError:
         msg = "The \"To date\" is\n earlier date than \"From date\""
         return msg
-
