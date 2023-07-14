@@ -1,7 +1,10 @@
 from tkcalendar import Calendar, DateEntry
 import customtkinter as ctk
-import charts
+import bar_chart
+import pie_chart
 import __main__
+
+from datetime import datetime
 
 
 # noinspection PyTypeChecker
@@ -22,14 +25,15 @@ class App(ctk.CTk):
         self.frame_buttons = ctk.CTkFrame(self.frame)
         self.frame_buttons.grid(row=0, column=0, pady=5, padx=20, sticky='nsew')
         self.circle = ctk.CTkButton(self.frame_buttons, text="Pie chart", corner_radius=10,
-                                    command=lambda: [self.checkbox_activities(), self.chosen_date(),
-                                                     charts.pie_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button)])
+                                    command=lambda: [self.checkbox_activities(), self.chosen_date(), self.pie_chart()])
         self.circle.pack(pady=20, padx=20, side='top')
 
         self.bar = ctk.CTkButton(self.frame_buttons, text="Bar chart", corner_radius=10,
-                                 command=lambda: [self.checkbox_activities(), self.chosen_date(),
-                                                  charts.stacked_bar_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button)])
+                                 command=lambda: [self.checkbox_activities(), self.chosen_date(), self.bar_chart()])
         self.bar.pack(pady=20, padx=20, side='top')
+
+        self.label_message = ctk.CTkLabel(self.frame_buttons, text='datyyy')
+        self.label_message.pack(side='top')
 
         # Create labels for option_menu_dates/calendars
         self.label_from_option = ctk.CTkLabel(self.frame, text="From date:")
@@ -40,34 +44,26 @@ class App(ctk.CTk):
 
         # Create calendar_start
         self.first_date = list(__main__.activity_summary.keys())[0]
-        self.cal_start = Calendar(self.frame, background='darkblue', selectmode='day',
+        self.cal_start = Calendar(self.frame, background='#0C60B0', selectmode='day',
                                   foreground='white', borderwidth=2, year=int(self.first_date.split('-')[0]),
                                   month=int(self.first_date.split('-')[1]), day=int(self.first_date.split('-')[2]))
         self.cal_start.grid(row=0, column=2, pady=22, padx=30, sticky='s')
 
         # Create calender_end
         self.last_date = list(__main__.activity_summary.keys())[-1]
-        self.cal_end = Calendar(self.frame, background='darkblue', selectmode='day',
+        self.cal_end = Calendar(self.frame, background='#0C60B0', selectmode='day',
                                 foreground='white', borderwidth=2, year=int(self.last_date.split('-')[0]),
                                 month=int(self.last_date.split('-')[1]), day=int(self.last_date.split('-')[2]))
         self.cal_end.grid(row=0, column=3, pady=22, padx=30, sticky='s')
 
-        # Create option bars with dates
-        # self.first_date = list(__main__.activity_summary.keys())[0]
-        # self.last_date = list(__main__.activity_summary.keys())[-1]
-        # self.from_option_var = ctk.StringVar(value=self.first_date)  # set initial value
-        # self.from_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()],
-        #                                      command=self.chosen_first_date, variable=self.from_option_var)
-        # self.from_option.grid(row=0, column=2, pady=22, padx=30, sticky='s')
-        # self.from_option.set(self.first_date)
-        #
-        # self.to_option_var = ctk.StringVar(value=self.last_date)  # set initial value
-        # self.to_option = ctk.CTkOptionMenu(self.frame, values=[a for a in __main__.activity_summary.keys()],
-        #                                    command=self.chosen_last_date, variable=self.to_option_var)
-        # self.to_option.grid(row=0, column=3, pady=22, padx=30, sticky='s')
-        # self.to_option.set(self.last_date)
+        # Mark available dates
+        for date in list(__main__.activity_summary.keys()):
+            self.cal_start.calevent_create(datetime.strptime(date, "%Y-%m-%d"), "Highlighted Date", "event")
+            self.cal_end.calevent_create(datetime.strptime(date, "%Y-%m-%d"), "Highlighted Date", "event")
+        self.cal_start.tag_config("event", background='#46B04B')
+        self.cal_end.tag_config("event", background='#46B04B')
 
-        # Create checkboxes for activities
+        # Create checkbox_activities
         self.to_chart = []      # To function: checkbox_activities
         self.list_of_activities = []
         self.counter: int = -1
@@ -98,15 +94,15 @@ class App(ctk.CTk):
                 self.to_chart.append(key)
 
     # Function to choose range dates
-    def chosen_first_date(self, choice):
-        self.first_date = choice
-
-    def chosen_last_date(self, choice):
-        self.last_date = choice
-
     def chosen_date(self):
         self.first_date_to_button = str(self.cal_start.selection_get())
         self.last_date_to_button = str(self.cal_end.selection_get())
 
-        # date = cal.entry.get()
-        # date_label.config(text=date)
+    def pie_chart(self):
+        self.text = pie_chart.pie_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button)
+        self.label_message.configure(text=self.text)
+
+    def bar_chart(self):
+        self.text = bar_chart.stacked_bar_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button)
+        self.label_message.configure(text=self.text)
+

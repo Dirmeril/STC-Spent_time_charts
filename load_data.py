@@ -42,8 +42,4 @@ def load():
     sorting = sorted(activity_summary.items(), key=lambda x: x[0])
     activity_summary = dict(sorting)
 
-    print(activity_summary.keys())
-    for a in activity_summary.keys():
-        print(a)
-        print(type(a))
     return activity_summary
