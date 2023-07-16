@@ -15,10 +15,10 @@ class App(ctk.CTk):
         self.title('STC')
         # Create frame on top
         self.frame = ctk.CTkFrame(self)
-        self.frame.pack(pady=2)
+        self.frame.pack(pady=2, side='top')
         # Create frame on left-down
         self.frame_3 = ctk.CTkFrame(self)
-        self.frame_3.pack(side='left', fill='x', expand=True)
+        self.frame_3.pack(side='left', fill='both')
         # Create frame on right-down
         self.frame_4 = ctk.CTkFrame(self)
         self.frame_4.pack(side='left', fill='both', expand=True)
@@ -39,8 +39,15 @@ class App(ctk.CTk):
                                  command=lambda: [self.checkbox_activities(), self.chosen_date(), self.bar_chart()])
         self.bar.pack(pady=20, padx=20, side='top')
 
+        # Create Message Box
         self.label_message = ctk.CTkLabel(self.frame_buttons, text='The largest range\nselected by default')
         self.label_message.pack(side='top')
+
+        # Create SliderBar
+        self.slider = ctk.CTkSlider(self.frame, from_=0, to=5, hover=True, orientation='vertical', number_of_steps=5)
+        self.slider.grid(column=1, row=0)
+        current_value = ctk.DoubleVar()
+        self.variable = current_value
 
         # Create labels for option_menu_dates/calendars
         self.label_from_option = ctk.CTkLabel(self.frame, text="From date:")
@@ -82,11 +89,16 @@ class App(ctk.CTk):
         for self.sorted_activity in self.sorted_activities:
             self.counter += 1
             # Split activities on two columns
-            if self.counter % 2 == 0:
+            if self.counter % 3 == 0:
                 self.checkbox = ctk.CTkCheckBox(self.frame_3, text=self.sorted_activity,
                                                 variable=self.activities_var[self.sorted_activity], onvalue=1,
                                                 offvalue=0)
                 self.checkbox.grid(row=self.counter, column=0, pady=5, padx=20, ipadx=15, sticky='ew')
+            elif self.counter % 3 == 2:
+                self.checkbox = ctk.CTkCheckBox(self.frame_3, text=self.sorted_activity,
+                                                variable=self.activities_var[self.sorted_activity], onvalue=1,
+                                                offvalue=0)
+                self.checkbox.grid(row=self.counter - 2, column=2, pady=5, padx=5, ipadx=15, sticky='ew')
             else:
                 self.checkbox = ctk.CTkCheckBox(self.frame_3, text=self.sorted_activity,
                                                 variable=self.activities_var[self.sorted_activity], onvalue=1,
@@ -95,7 +107,7 @@ class App(ctk.CTk):
 
         # Create text-pool for error in load data
         self.textbox = ctk.CTkTextbox(self.frame_4, corner_radius=0)
-        self.textbox.pack(fill='both', expand=True)
+        self.textbox.pack(padx=1, fill='both', expand=True)
         self.textbox.insert('insert', "Lines which haven't been load in data:\n")
         for _ in __main__.error_list:
             self.textbox.insert("insert", str(_))
@@ -107,6 +119,9 @@ class App(ctk.CTk):
         for key, value in self.activities_var.items():
             if value.get() == 1:
                 self.to_chart.append(key)
+
+    def number_slider(self):
+        print(self.slider.get())
 
     # Function to choose range dates
     def chosen_date(self):
