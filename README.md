@@ -3,7 +3,8 @@
 `pip install customtkinter  
 pip install pandas  
 pip install matplotlib  
-pip install tkcalendar`
+pip install tkcalendar  
+pip install mplcursors`
 
 ### About the program
 A program collect data from file work_log.txt and display pie chart or stacked bar chart. The program allows choose activities and time range which will be display. 
