@@ -3,6 +3,7 @@ import customtkinter as ctk
 import bar_chart
 import pie_chart
 import __main__
+from tkinter import ttk
 from datetime import datetime
 
 
@@ -16,6 +17,9 @@ class App(ctk.CTk):
         # Create frame on top
         self.frame = ctk.CTkFrame(self)
         self.frame.pack(pady=2, side='top')
+        # macOS
+        self.style = ttk.Style(self.frame)
+        self.style.theme_use('clam')
         # Create frame on left-down
         self.frame_3 = ctk.CTkFrame(self)
         self.frame_3.pack(side='left', fill='both')
@@ -58,15 +62,16 @@ class App(ctk.CTk):
 
         # Create calendar_start
         self.first_date = list(__main__.activity_summary.keys())[0]
-        self.cal_start = Calendar(self.frame, background='#0C60B0', selectmode='day',
-                                  foreground='white', borderwidth=2, year=int(self.first_date.split('-')[0]),
+        self.cal_start = Calendar(self.frame, background='DodgerBlue4', selectmode='day',
+                                  borderwidth=2, year=int(self.first_date.split('-')[0]),
                                   month=int(self.first_date.split('-')[1]), day=int(self.first_date.split('-')[2]))
+        # foreground='black' color for letters and numbers
         self.cal_start.grid(row=0, column=2, pady=22, padx=30, sticky='s')
 
         # Create calender_end
         self.last_date = list(__main__.activity_summary.keys())[-1]
-        self.cal_end = Calendar(self.frame, background='#0C60B0', selectmode='day',
-                                foreground='white', borderwidth=2, year=int(self.last_date.split('-')[0]),
+        self.cal_end = Calendar(self.frame, background='DodgerBlue4', selectmode='day',
+                                borderwidth=2, year=int(self.last_date.split('-')[0]),
                                 month=int(self.last_date.split('-')[1]), day=int(self.last_date.split('-')[2]))
         self.cal_end.grid(row=0, column=3, pady=22, padx=30, sticky='s')
 
@@ -74,8 +79,8 @@ class App(ctk.CTk):
         for date in list(__main__.activity_summary.keys()):
             self.cal_start.calevent_create(datetime.strptime(date, "%Y-%m-%d"), "Highlighted Date", "event")
             self.cal_end.calevent_create(datetime.strptime(date, "%Y-%m-%d"), "Highlighted Date", "event")
-        self.cal_start.tag_config("event", background='#46B04B')
-        self.cal_end.tag_config("event", background='#46B04B')
+        self.cal_start.tag_config("event", background='forest green')
+        self.cal_end.tag_config("event", background='forest green')
 
         # Create checkbox_activities
         self.to_chart = []      # To function: checkbox_activities
@@ -119,9 +124,6 @@ class App(ctk.CTk):
         for key, value in self.activities_var.items():
             if value.get() == 1:
                 self.to_chart.append(key)
-
-    def number_slider(self):
-        print(self.slider.get())
 
     # Function to choose range dates
     def chosen_date(self):

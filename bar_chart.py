@@ -34,8 +34,8 @@ def stacked_bar_chart(activities, first_date, last_date):
             for _ in list(df_data_time.index):
                 day = datetime.datetime.strptime(_, "%Y-%m-%d").strftime('%A')
                 days_list.append(day)
-            df_data_time['days'] = days_list
-            df_data_time.set_index('days', inplace=True)
+            df_data_time['Days'] = days_list
+            df_data_time.set_index('Days', inplace=True)
 
             # Calculation from datetime.delta time to seconds in int
             for a in data_activities:
