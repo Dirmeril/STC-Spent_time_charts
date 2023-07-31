@@ -2,10 +2,11 @@ import matplotlib.pyplot as plt
 import __main__
 import datetime
 import mplcursors
+import pandas as pd
 
 
 # Chosen activities and dates transfer to stacked bar
-def bar_chosen_dates_and_activities(activities, first_date, last_date):
+def bar_chosen_dates_and_activities(activities, first_date, last_date, discard_number):
     try:
         dates = list(__main__.activity_summary.keys())
         first = dates.index(first_date)
@@ -13,9 +14,29 @@ def bar_chosen_dates_and_activities(activities, first_date, last_date):
 
         # Swap dates and activities to DataFrame
         chosen_activities = __main__.df_activity_summary.loc[[a for a in activities], [d for d in dates[first:last]]]
-        list_of_activities = [a for a in activities]
+
+        # Discard of small values
+        counter = -1
+        activities_without_small_percent = []
+        # Create sum_var for day
+        temp_dict = {}
+
+        for i in list(chosen_activities.columns):
+            temp_dict[i] = datetime.timedelta(hours=0, minutes=0, seconds=0)
+
+        for act in chosen_activities:
+            counter += 1
+            for i in range(len(chosen_activities[act])):
+                if chosen_activities[act][i] * 100 / chosen_activities.sum(axis=0)[counter] > discard_number:
+                    activities_without_small_percent.append(chosen_activities.index[i])
+                else:
+                    if pd.notna(chosen_activities[act][i]):
+                        temp_dict[act] += chosen_activities[act][i]
+                        chosen_activities[act][i] = pd.NA
+        activities_without_small_percent = sorted(set(activities_without_small_percent))
+
         msg = ''
-        return chosen_activities, list_of_activities, msg
+        return chosen_activities, activities_without_small_percent, msg, temp_dict
 
     except ValueError:
         msg = 'Choose available date'
@@ -23,11 +44,22 @@ def bar_chosen_dates_and_activities(activities, first_date, last_date):
 
 
 # Stacked bar chart
-def stacked_bar_chart(activities, first_date, last_date):
+def stacked_bar_chart(activities, first_date, last_date, discard_number):
     try:
-        df_data_time, data_activities, msg = bar_chosen_dates_and_activities(activities, first_date, last_date)
+        df_data_time, data_activities, msg, temp_dict_add_timedelta = bar_chosen_dates_and_activities(activities, first_date, last_date, discard_number)
         if df_data_time is not None and data_activities is not None:
-            df_data_time = df_data_time.T       # transposition
+
+            # Focus on only activities which have time after discard
+            df_data_time = df_data_time.loc[data_activities]
+            # Transposition
+            df_data_time = df_data_time.T
+
+            # Add in sum discard activities in one stacked-bar and Calculation from datetime.delta time to seconds in int
+            col_other = pd.DataFrame(temp_dict_add_timedelta.values(), index=temp_dict_add_timedelta.keys())
+            if discard_number != 0:
+                for i in col_other:
+                    col_other[i] = col_other[i].dt.total_seconds()/3600
+                df_data_time['Other'] = col_other
 
             # Change date format from YYYY-MM-DD to weekday
             days_list = []

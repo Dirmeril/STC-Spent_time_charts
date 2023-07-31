@@ -4,7 +4,7 @@ import __main__
 
 
 # Sum data for pie chart
-def chosen_dates_and_activities(activities, first_date, last_date):
+def chosen_dates_and_activities(activities, first_date, last_date, discard_number):
     try:
         dates = list(__main__.activity_summary.keys())
         first = dates.index(first_date)
@@ -17,11 +17,21 @@ def chosen_dates_and_activities(activities, first_date, last_date):
         data_sum_in_rows = chosen_activities.sum(axis=1)
         counter = -1
         activities_without_small_percent = []
+        activities_small_percent = []
         for act in data_sum_in_rows:
             counter += 1
-            if act * 100 / data_sum_in_rows.sum(axis=0) >= 1:
+            if act * 100 / data_sum_in_rows.sum(axis=0) > discard_number:
                 activities_without_small_percent.append(data_sum_in_rows.index[counter])
+            else:
+                activities_small_percent.append(data_sum_in_rows.index[counter])
         chosen_activities_without_small_percent = data_sum_in_rows.loc[[a for a in activities_without_small_percent]]
+
+        # Sum all discarded times
+        chosen_activities_small_percent = data_sum_in_rows.loc[[a for a in activities_small_percent]]
+        chosen_activities_small_percent = chosen_activities_small_percent.sum(axis=0)
+        # Add discarded values to rest
+        if discard_number != 0:
+            chosen_activities_without_small_percent.loc['Other'] = chosen_activities_small_percent
         msg = ''
         return chosen_activities_without_small_percent, activities_without_small_percent, msg
 
@@ -31,9 +41,9 @@ def chosen_dates_and_activities(activities, first_date, last_date):
 
 
 # Pie chart
-def pie_chart(activities, first_date, last_date):
+def pie_chart(activities, first_date, last_date, discard_number):
     try:
-        data_time, data_activities, msg = chosen_dates_and_activities(activities, first_date, last_date)
+        data_time, data_activities, msg = chosen_dates_and_activities(activities, first_date, last_date, discard_number)
         if data_time is not None and data_activities is not None:
             col_dates = first_date+' - '+last_date
             df_data_time = pd.DataFrame(data_time, columns=[col_dates])

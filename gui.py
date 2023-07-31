@@ -17,24 +17,26 @@ class App(ctk.CTk):
         # Create frame on top
         self.frame = ctk.CTkFrame(self)
         self.frame.pack(pady=2, side='top')
-        # macOS
-        self.style = ttk.Style(self.frame)
-        self.style.theme_use('clam')
         # Create frame on left-down
         self.frame_3 = ctk.CTkFrame(self)
         self.frame_3.pack(side='left', fill='both')
         # Create frame on right-down
         self.frame_4 = ctk.CTkFrame(self)
         self.frame_4.pack(side='left', fill='both', expand=True)
+        # macOS (correct display colors)
+        self.style = ttk.Style(self.frame)
+        self.style.theme_use('clam')
 
         self.sorted_activity = None
         self.first_date_to_button = None
         self.last_date_to_button = None
         self.text = None
 
-        # Create frame for chart buttons pie and bar and that buttons
+        # Create inside first frame in 'frame on top' for buttons
         self.frame_buttons = ctk.CTkFrame(self.frame)
         self.frame_buttons.grid(row=0, column=0, pady=5, padx=20, sticky='nsew')
+
+        # Create buttons pie and bar
         self.circle = ctk.CTkButton(self.frame_buttons, text="Pie chart", corner_radius=10,
                                     command=lambda: [self.checkbox_activities(), self.chosen_date(), self.pie_chart()])
         self.circle.pack(pady=20, padx=20, side='top')
@@ -47,11 +49,23 @@ class App(ctk.CTk):
         self.label_message = ctk.CTkLabel(self.frame_buttons, text='The largest range\nselected by default')
         self.label_message.pack(side='top')
 
+        # Create inside second frame in 'frame on top' for SliderBar
+        self.frame_slider = ctk.CTkFrame(self.frame)
+        self.frame_slider.grid(row=0, column=1, pady=5, sticky='nsew')
+
         # Create SliderBar
-        self.slider = ctk.CTkSlider(self.frame, from_=0, to=5, hover=True, orientation='vertical', number_of_steps=5)
-        self.slider.grid(column=1, row=0)
-        current_value = ctk.DoubleVar()
-        self.variable = current_value
+        self.slider = ctk.CTkSlider(self.frame_slider, from_=0, to=5, orientation='vertical', number_of_steps=5,
+                                    command=self.slider_number)
+        self.slider.pack(side='top', padx=15)
+        self.slider.bind("<MouseWheel>", self.mouse_wheel)  # add function to MouseWheel
+
+        # Default settings for label and SliderBar value
+        self.slider.set(1)
+        self.discard_number = 1
+
+        # Create Label for SliderBar
+        self.label_slider = ctk.CTkLabel(self.frame_slider, text=int(self.slider.get()))
+        self.label_slider.pack(side='bottom')
 
         # Create labels for option_menu_dates/calendars
         self.label_from_option = ctk.CTkLabel(self.frame, text="From date:")
@@ -131,9 +145,25 @@ class App(ctk.CTk):
         self.last_date_to_button = str(self.cal_end.selection_get())
 
     def pie_chart(self):
-        self.text = pie_chart.pie_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button)
+        self.text = pie_chart.pie_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button, self.discard_number)
         self.label_message.configure(text=self.text)
 
     def bar_chart(self):
-        self.text = bar_chart.stacked_bar_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button)
+        self.text = bar_chart.stacked_bar_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button, self.discard_number)
         self.label_message.configure(text=self.text)
+
+    def slider_number(self, value):
+        self.discard_number = int(value)
+        self.label_slider.configure(text=int(value))
+
+    def mouse_wheel(self, event):
+        # Mouse wheel scrolling support
+        delta = -1 if event.delta < 0 else 1
+        new_value = self.slider.get() + delta
+
+        # Limiting the value of the slider to the range of 0-100
+        new_value = int(max(0, min(5, new_value)))
+
+        # Set a new slider value
+        self.slider.set(new_value)
+        self.slider_number(new_value)
