@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import __main__
+import numpy as np
 
 
 # Sum data for pie chart
@@ -50,7 +51,16 @@ def pie_chart(activities, first_date, last_date, discard_number):
 
             # Calculation from datetime.delta time to seconds in int
             df_data_time[col_dates] = df_data_time[col_dates].dt.total_seconds()
-            df_data_time.plot.pie(y=col_dates, figsize=(6, 5), autopct=lambda p: f'{p:.0f}%', legend=False, title=col_dates, ylabel='')
+
+            def func(pct, time_from_date_time):
+                absolute = np.round(pct / 100. * np.sum(time_from_date_time), 2)
+                hours = int(absolute)
+                mint = int((absolute - hours)*60)
+                return f"{pct:.1f}% ({hours}:{mint:02d})"
+
+            data = [x/3600 for x in df_data_time[col_dates]]
+            df_data_time.plot.pie(y=col_dates, figsize=(6, 5), autopct=lambda p: func(p, data), legend=False,
+                                  title=col_dates, ylabel='')
             # df_data_time.plot
             plt.show()
             return msg
