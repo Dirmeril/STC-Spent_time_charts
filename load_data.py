@@ -3,7 +3,7 @@ import datetime
 
 
 def load():
-    name = 'work_log3.txt'
+    name = 'work_log.txt'
     get_dir = os.getcwd()
     file = os.path.join(get_dir, name)
     activity_summary = {}
