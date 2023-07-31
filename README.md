@@ -7,7 +7,8 @@ pip install tkcalendar
 pip install mplcursors`
 
 ### About the program
-A program collect data from file work_log.txt and display sum activities in all range in pie chart or acvities per day in stacked bar chart. The program allows choose activities and time range which will be display. With slider bar you can discard activity which is under from 1 to 5% in sum all activites in day (stacked bar) and in the time range (pie chart). The text file must be in the same folder as the program.  
+A program collect data from file work_log.txt and display sum activities in all range in pie chart or acvities per day in stacked bar chart. The program allows choose activities and time range which will be display. With slider bar you can discard activity which is under from 1 to 5% in sum all activites in day (stacked bar) and in the time range (pie chart). The text file must be in the same folder as the program.
+You can select only highlighted dates.
 Load data from file work_log.txt which has pattern:  
 'Activity; time spent on activity; date when activity started
 
