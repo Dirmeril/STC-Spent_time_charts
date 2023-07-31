@@ -145,11 +145,13 @@ class App(ctk.CTk):
         self.last_date_to_button = str(self.cal_end.selection_get())
 
     def pie_chart(self):
-        self.text = pie_chart.pie_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button, self.discard_number)
+        self.text = pie_chart.pie_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button,
+                                        self.discard_number)
         self.label_message.configure(text=self.text)
 
     def bar_chart(self):
-        self.text = bar_chart.stacked_bar_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button, self.discard_number)
+        self.text = bar_chart.stacked_bar_chart(self.to_chart, self.first_date_to_button, self.last_date_to_button,
+                                                self.discard_number)
         self.label_message.configure(text=self.text)
 
     def slider_number(self, value):
